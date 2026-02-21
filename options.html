@@ -1,0 +1,429 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Job Assistant — Settings</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg:           #f0f2f8;
+      --panel:        #ffffff;
+      --text:         #1a2035;
+      --muted:        #5a6480;
+      --border:       #d4dced;
+      --accent:       #1a5fb4;
+      --accent-hover: #154e9c;
+      --ok:           #276d3b;
+      --warn:         #8a5c10;
+      --danger:       #c0392b;
+      --chunk-border: #e2e8f5;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; }
+    .page { max-width:1240px; margin:24px auto 48px; padding:0 20px; }
+    .card { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px 22px; margin-bottom:14px; box-shadow:0 4px 14px rgba(20,36,70,.05); }
+    h1 { margin:0 0 6px; font-size:1.5rem; letter-spacing:-.3px; }
+    h2 { margin:0; font-size:1rem; font-weight:700; letter-spacing:-.1px; }
+    p  { margin:0; color:var(--muted); }
+    .subtitle { font-size:.88rem; color:var(--muted); }
+    label { display:block; font-weight:600; font-size:.82rem; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); margin-bottom:5px; }
+    textarea, input[type="password"], input[type="text"], input[type="number"] { width:100%; border:1px solid var(--border); border-radius:9px; padding:9px 11px; font:inherit; color:var(--text); background:#fff; transition:border-color .15s; }
+    textarea:focus, input[type="password"]:focus, input[type="text"]:focus, input[type="number"]:focus { outline:none; border-color:var(--accent); }
+    textarea { resize:vertical; line-height:1.45; }
+    textarea.input-area { min-height:180px; }
+    textarea.raw-preview { min-height:110px; background:#f8faff; color:var(--muted); font-size:.84rem; }
+    input[type="file"] { width:100%; border:1.5px dashed var(--border); border-radius:9px; padding:9px 11px; font:inherit; background:#fafbff; cursor:pointer; color:var(--muted); }
+    input[type="file"]:hover { border-color:var(--accent); }
+    button { border:0; border-radius:9px; padding:9px 16px; font:inherit; font-weight:600; cursor:pointer; transition:background .15s,opacity .15s; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+    .btn-primary { background:var(--accent); color:#fff; padding:10px 22px; }
+    .btn-primary:hover:not(:disabled) { background:var(--accent-hover); }
+    .btn-ghost { background:#edf2fe; color:#1d3f70; border:1px solid #c8d8f4; font-size:.82rem; padding:6px 12px; }
+    .btn-ghost:hover:not(:disabled) { background:#dde8ff; }
+    .btn-reset { background:#fff0ef; color:var(--danger); border:1px solid #f5c0bb; font-size:.8rem; padding:5px 11px; border-radius:8px; font-weight:600; cursor:pointer; }
+    .btn-reset:hover { background:#ffe0de; }
+    .lane-stale { display:none; font-size:.8rem; font-weight:600; color:#854d0e; background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; padding:5px 11px; white-space:nowrap; cursor:pointer; }
+    .lane-stale:hover { background:#fde68a; }
+    .gen-row { display:flex; align-items:center; gap:10px; }
+    .gen-lane-label { width:120px; font-size:.82rem; font-weight:600; flex-shrink:0; }
+    .gen-row input[type="range"] { flex:1; accent-color:var(--accent); }
+    .gen-val { min-width:28px; font-size:.82rem; font-weight:700; text-align:right; }
+    .gen-max { font-size:.74rem; color:var(--muted); white-space:nowrap; }
+    input[type="range"] { accent-color:var(--accent); }
+    .note { font-size:.82rem; color:var(--muted); margin-top:5px; }
+    .file-status { font-size:.82rem; min-height:18px; color:var(--muted); margin-top:4px; }
+    .file-status.ok   { color:var(--ok); }
+    .file-status.warn { color:var(--warn); }
+    #globalStatus { font-weight:700; font-size:.93rem; min-height:20px; }
+    #globalStatus.ok   { color:var(--ok); }
+    #globalStatus.warn { color:var(--warn); }
+    .settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+    .field { display:flex; flex-direction:column; gap:5px; }
+    /* Lane cards */
+    .lane-card { background:var(--panel); border:1px solid var(--border); border-radius:14px; margin-bottom:14px; overflow:hidden; box-shadow:0 4px 14px rgba(20,36,70,.05); }
+    .lane-header { display:flex; align-items:center; justify-content:space-between; padding:13px 20px 11px; border-bottom:1px solid var(--chunk-border); background:#fafbff; gap:10px; }
+    .lane-header-left { display:flex; align-items:center; gap:12px; }
+    .lane-icon { font-size:1.25rem; line-height:1; }
+    .lane-desc { font-size:.82rem; color:var(--muted); margin-top:1px; }
+    .lane-body { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+    .lane-input { padding:16px 20px; border-right:1px solid var(--chunk-border); display:flex; flex-direction:column; gap:13px; }
+    .lane-output { padding:16px 20px; display:flex; flex-direction:column; gap:13px; }
+    .output-block { display:flex; flex-direction:column; gap:5px; }
+    .output-label { font-weight:700; font-size:.78rem; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); display:flex; align-items:center; justify-content:space-between; }
+    .output-meta { font-weight:400; font-size:.76rem; text-transform:none; letter-spacing:0; }
+    /* Chunks */
+    .chunks-container { border:1px solid var(--chunk-border); border-radius:9px; background:#f8faff; max-height:260px; overflow-y:auto; padding:5px 7px; }
+    .chunks-empty { color:var(--muted); font-size:.83rem; padding:14px 10px; text-align:center; }
+    .chunk-item { display:flex; gap:8px; padding:6px 8px; border-radius:7px; margin-bottom:3px; background:#fff; border:1px solid var(--chunk-border); font-size:.82rem; line-height:1.44; word-break:break-word; }
+    .chunk-item:last-child { margin-bottom:0; }
+    .chunk-num { flex-shrink:0; font-weight:700; font-size:.7rem; color:var(--accent); background:#edf2fe; border-radius:5px; padding:1px 6px; height:fit-content; margin-top:2px; }
+    .chunk-text { color:#2a344f; }
+    /* PDF extractor */
+    .pdf-extractor { border-top:1px solid var(--chunk-border); padding:13px 20px; background:#fafbff; display:flex; flex-direction:column; gap:9px; }
+    .pdf-extractor-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    #resumeExtractResult { border:1px solid var(--border); border-radius:9px; padding:12px; background:#fff; max-height:300px; overflow-y:auto; font-size:.82rem; }
+    /* Save bar */
+    .save-bar { display:flex; align-items:center; gap:14px; }
+    @media (max-width:900px) { .lane-body{grid-template-columns:1fr;} .lane-input{border-right:none;border-bottom:1px solid var(--chunk-border);} .settings-grid{grid-template-columns:1fr;} }
+    @media (max-width:600px) { .page{padding:0 10px;} }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="card">
+    <h1>AI Job Assistant</h1>
+    <p class="subtitle">Configure your personal data. Click <strong>Save &amp; Reindex</strong> to build semantic search indexes from your content.</p>
+  </div>
+
+  <!-- Settings -->
+  <div class="card">
+    <h2 style="margin-bottom:14px;">Settings</h2>
+    <div class="settings-grid">
+      <div class="field">
+        <label for="apiKey">Anthropic API Key</label>
+        <input id="apiKey" type="password" placeholder="sk-ant-api03-…" autocomplete="off" />
+        <p class="note">Stored locally. Never sent anywhere other than api.anthropic.com.</p>
+      </div>
+      <div class="field">
+        <label for="langextractBackendUrl">LangExtract Backend URL</label>
+        <input id="langextractBackendUrl" type="text" placeholder="http://127.0.0.1:8787" autocomplete="off" />
+        <p class="note">Local Python server for structured extraction and semantic embedding.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANE: Experience -->
+  <div class="lane-card">
+    <div class="lane-header">
+      <div class="lane-header-left">
+        <div>
+          <h2>Experience</h2>
+          <p class="lane-desc">STAR stories, project outcomes, achievements not already in your CV.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button type="button" class="lane-stale" id="factStale">Reindex</button>
+        <button class="btn-reset" id="resetFactsBtn">↺ Reset</button>
+      </div>
+    </div>
+    <div class="lane-body">
+      <div class="lane-input">
+        <div class="field">
+          <label for="factBox">Paste experience</label>
+          <textarea id="factBox" class="input-area" placeholder="STAR stories, project outcomes, achievements, certifications — anything not already in your CV…"></textarea>
+        </div>
+        <div class="field">
+          <label for="factFiles">Upload documents</label>
+          <input id="factFiles" type="file" multiple />
+          <p class="file-status" id="factFilesStatus">No files selected.</p>
+        </div>
+      </div>
+      <div class="lane-output">
+        <div class="output-block">
+          <div class="output-label">Raw (paste + uploads) <span class="output-meta" id="factRawMeta"></span></div>
+          <textarea id="factRaw" class="raw-preview" readonly placeholder="Combined text appears here…"></textarea>
+        </div>
+        <div class="output-block">
+          <div class="output-label">Chunks after indexing <span class="output-meta" id="factChunksMeta"></span></div>
+          <div id="factChunks" class="chunks-container"><div class="chunks-empty">No chunks yet — click Save &amp; Reindex.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANE: CV / Resume -->
+  <div class="lane-card">
+    <div class="lane-header">
+      <div class="lane-header-left">
+        <div>
+          <h2>CV / Resume</h2>
+          <p class="lane-desc">Your formal CV. Paste, upload, or parse from PDF using LangExtract below.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button type="button" class="lane-stale" id="resumeStale">Reindex</button>
+        <button class="btn-reset" id="resetResumeBtn">↺ Reset</button>
+      </div>
+    </div>
+    <div class="lane-body">
+      <div class="lane-input">
+        <div class="field">
+          <label for="resumeBox">Paste CV text</label>
+          <textarea id="resumeBox" class="input-area" placeholder="Paste your full CV / resume here, or use the PDF extractor below…"></textarea>
+        </div>
+        <div class="field">
+          <label for="resumeFiles">Upload CV documents</label>
+          <input id="resumeFiles" type="file" multiple />
+          <p class="file-status" id="resumeFilesStatus">No files selected.</p>
+        </div>
+      </div>
+      <div class="lane-output">
+        <div class="output-block">
+          <div class="output-label">Raw (paste + uploads) <span class="output-meta" id="resumeRawMeta"></span></div>
+          <textarea id="resumeRaw" class="raw-preview" readonly placeholder="Combined text appears here…"></textarea>
+        </div>
+        <div class="output-block">
+          <div class="output-label">Chunks after indexing <span class="output-meta" id="resumeChunksMeta"></span></div>
+          <div id="resumeChunks" class="chunks-container"><div class="chunks-empty">No chunks yet — click Save &amp; Reindex.</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- PDF extractor -->
+    <div class="pdf-extractor">
+      <div style="font-weight:700;font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;">PDF Extractor (LangExtract)</div>
+      <div class="pdf-extractor-row">
+        <input id="resumePdfInput" type="file" accept=".pdf" style="max-width:300px;" />
+        <button id="extractResumePdfBtn" class="btn-ghost" type="button" disabled>Extract PDF</button>
+        <input id="resumeExtractBackendUrl" type="text" readonly style="max-width:210px;background:#f4f6fc;font-size:.82rem;" />
+        <span id="resumeExtractStatus" class="file-status"></span>
+      </div>
+      <div id="resumeExtractResult"><p style="color:var(--muted);margin:0;">Upload a PDF and click Extract to see structured results.</p></div>
+    </div>
+  </div>
+
+  <!-- LANE: Voice / Past Cover Letters -->
+  <div class="lane-card">
+    <div class="lane-header">
+      <div class="lane-header-left">
+        <div>
+          <h2>Voice — Past Cover Letters</h2>
+          <p class="lane-desc">Cover letters <strong>you</strong> wrote. Claude learns your tone, rhythm, and structure.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button type="button" class="lane-stale" id="voiceStale">Reindex</button>
+        <button class="btn-reset" id="resetVoiceBtn">↺ Reset</button>
+      </div>
+    </div>
+    <div class="lane-body">
+      <div class="lane-input">
+        <div class="field">
+          <label for="voiceBox">Paste cover letters</label>
+          <textarea id="voiceBox" class="input-area" placeholder="Paste cover letters you wrote yourself…"></textarea>
+        </div>
+        <div class="field">
+          <label for="voiceFiles">Upload cover letter documents</label>
+          <input id="voiceFiles" type="file" multiple />
+          <p class="file-status" id="voiceFilesStatus">No files selected.</p>
+        </div>
+      </div>
+      <div class="lane-output">
+        <div class="output-block">
+          <div class="output-label">Raw (paste + uploads) <span class="output-meta" id="voiceRawMeta"></span></div>
+          <textarea id="voiceRaw" class="raw-preview" readonly placeholder="Combined text appears here…"></textarea>
+        </div>
+        <div class="output-block">
+          <div class="output-label">Chunks after indexing <span class="output-meta" id="voiceChunksMeta"></span></div>
+          <div id="voiceChunks" class="chunks-container"><div class="chunks-empty">No chunks yet — click Save &amp; Reindex.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANE: About Me / LinkedIn -->
+  <div class="lane-card">
+    <div class="lane-header">
+      <div class="lane-header-left">
+        <div>
+          <h2>About Me &amp; LinkedIn</h2>
+          <p class="lane-desc">Origin story, background, LinkedIn bio. Use popup → Import LinkedIn to auto-fill.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button type="button" class="lane-stale" id="linkedinStale">Reindex</button>
+        <button class="btn-reset" id="resetLinkedInBtn">↺ Reset</button>
+      </div>
+    </div>
+    <div class="lane-body">
+      <div class="lane-input">
+        <div class="field">
+          <label for="linkedinText">Paste LinkedIn / personal background</label>
+          <textarea id="linkedinText" class="input-area" placeholder="LinkedIn About section, origin story, where you're from, schools, personal background…"></textarea>
+        </div>
+        <div class="field">
+          <label for="linkedinFiles">Upload personal docs</label>
+          <input id="linkedinFiles" type="file" multiple />
+          <p class="file-status" id="linkedinFilesStatus">No files selected.</p>
+        </div>
+      </div>
+      <div class="lane-output">
+        <div class="output-block">
+          <div class="output-label">Raw (paste + uploads) <span class="output-meta" id="linkedinRawMeta"></span></div>
+          <textarea id="linkedinRaw" class="raw-preview" readonly placeholder="Combined text appears here…"></textarea>
+        </div>
+        <div class="output-block">
+          <div class="output-label">Chunks after indexing <span class="output-meta" id="linkedinChunksMeta"></span></div>
+          <div id="linkedinChunks" class="chunks-container"><div class="chunks-empty">No chunks yet — click Save &amp; Reindex.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANE: Company -->
+  <div class="lane-card">
+    <div class="lane-header">
+      <div class="lane-header-left">
+        <div>
+          <h2>Company Context</h2>
+          <p class="lane-desc">Job descriptions, company priorities. Use popup → Scrape Company to auto-fill.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button type="button" class="lane-stale" id="companyStale">Reindex</button>
+        <button class="btn-reset" id="resetCompanyBtn">↺ Reset</button>
+      </div>
+    </div>
+    <div class="lane-body">
+      <div class="lane-input">
+        <div class="field">
+          <label for="companyUrl">Company URL (optional)</label>
+          <input id="companyUrl" type="text" placeholder="https://example.com or LinkedIn company URL" />
+        </div>
+        <div class="field">
+          <label for="companyContext">Paste company / job context</label>
+          <textarea id="companyContext" class="input-area" placeholder="Job description, company priorities, mission, team context…"></textarea>
+        </div>
+        <div class="field">
+          <label for="companyScrapedText">Scraped page text</label>
+          <textarea id="companyScrapedText" style="min-height:80px;resize:vertical;background:#fafbff;" placeholder="Auto-filled by popup, or paste here…"></textarea>
+        </div>
+        <div class="field">
+          <label for="companyFiles">Upload company documents</label>
+          <input id="companyFiles" type="file" multiple />
+          <p class="file-status" id="companyFilesStatus">No files selected.</p>
+        </div>
+      </div>
+      <div class="lane-output">
+        <div class="output-block">
+          <div class="output-label">Raw (paste + scraped + uploads) <span class="output-meta" id="companyRawMeta"></span></div>
+          <textarea id="companyRaw" class="raw-preview" readonly placeholder="Combined text appears here…"></textarea>
+        </div>
+        <div class="output-block">
+          <div class="output-label">Chunks after indexing <span class="output-meta" id="companyChunksMeta"></span></div>
+          <div id="companyChunks" class="chunks-container"><div class="chunks-empty">No chunks yet — click Save &amp; Reindex.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generation Settings -->
+  <div class="card">
+    <h2 style="margin-bottom:16px;">Generation Settings</h2>
+
+    <div class="field" style="margin-bottom:18px;">
+      <label for="promptSuffix">Additional prompt instructions</label>
+      <textarea id="promptSuffix" style="min-height:76px;resize:vertical;" placeholder="Appended to every fill-in and cover letter prompt. E.g.: Keep answers under 80 words. Focus on leadership examples."></textarea>
+      <p class="note">Leave blank to use the built-in instructions only.</p>
+    </div>
+
+    <div class="field" style="margin-bottom:22px;">
+      <label>Creativity &mdash; Temperature &nbsp;<span id="tempVal" style="font-weight:700;color:var(--text);">0.50</span></label>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+        <span style="font-size:.78rem;color:var(--muted);">Focused</span>
+        <input type="range" id="temperatureSlider" min="0.05" max="1.00" step="0.05" value="0.50" style="flex:1;" />
+        <span style="font-size:.78rem;color:var(--muted);">Creative</span>
+      </div>
+      <p class="note">Lower = more grounded and consistent. Higher = more varied and imaginative. Applies to all Claude calls.</p>
+    </div>
+
+    <div class="field">
+      <label style="margin-bottom:6px;display:block;">Chunks fed to Claude &mdash; per lane</label>
+      <p class="note" style="margin-bottom:10px;">Controls how many retrieved context snippets Claude sees. Max is determined by the indexed chunk count for each lane. Reindex a lane to unlock its full range.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="gen-row"><span class="gen-lane-label">Experience</span><input type="range" id="chunkSliderFact"     min="1" max="6"  step="1" value="6"  /><span class="gen-val" id="chunkValFact"    >6</span> <span class="gen-max" id="chunkMaxFact"    >/ 0 chunks</span></div>
+        <div class="gen-row"><span class="gen-lane-label">CV / Resume</span><input type="range" id="chunkSliderResume"   min="1" max="12" step="1" value="12" /><span class="gen-val" id="chunkValResume"  >12</span><span class="gen-max" id="chunkMaxResume"  >/ 0 chunks</span></div>
+        <div class="gen-row"><span class="gen-lane-label">Voice</span><input type="range" id="chunkSliderVoice"    min="1" max="5"  step="1" value="5"  /><span class="gen-val" id="chunkValVoice"   >5</span> <span class="gen-max" id="chunkMaxVoice"   >/ 0 chunks</span></div>
+        <div class="gen-row"><span class="gen-lane-label">About Me</span><input type="range" id="chunkSliderLinkedin" min="1" max="5"  step="1" value="5"  /><span class="gen-val" id="chunkValLinkedin">5</span> <span class="gen-max" id="chunkMaxLinkedin">/ 0 chunks</span></div>
+        <div class="gen-row"><span class="gen-lane-label">Company</span><input type="range" id="chunkSliderCompany"  min="1" max="5"  step="1" value="5"  /><span class="gen-val" id="chunkValCompany" >5</span> <span class="gen-max" id="chunkMaxCompany" >/ 0 chunks</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save bar -->
+  <div class="card save-bar">
+    <button id="saveBtn" class="btn-primary" type="button">Save &amp; Reindex</button>
+    <span id="globalStatus"></span>
+  </div>
+
+  <!-- ── Embedding Visualiser ─────────────────────────────────────────────── -->
+  <div class="card" id="vizCard" style="margin-top:6px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+      <div>
+        <h2 style="margin-bottom:4px;">Embedding Space</h2>
+        <p class="subtitle">Every indexed chunk projected to 3-D via PCA on its raw embedding vector. Nearby points share semantic meaning. <strong>Drag</strong> to orbit · <strong>Scroll</strong> to zoom · <strong>Click</strong> any dot to read it.</p>
+      </div>
+      <button id="vizRefreshBtn" type="button" style="height:34px;padding:0 14px;font-size:.82rem;background:#f0f4ff;border:1px solid var(--border);border-radius:8px;cursor:pointer;white-space:nowrap;">↺ Refresh</button>
+    </div>
+
+    <!-- Query row -->
+    <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px;">
+      <div style="flex:1;min-width:240px;">
+        <div style="font-size:.86rem;font-weight:600;color:var(--muted);margin-bottom:5px;">Example query — watch where it lands in the cluster</div>
+        <input type="text" id="vizQueryInput" placeholder="e.g.  machine learning project at a SaaS company" style="height:38px;" />
+      </div>
+      <button id="vizQueryBtn" type="button" style="height:38px;padding:0 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;font-size:.86rem;">Embed &amp; Plot</button>
+    </div>
+
+    <!-- Canvas only (full width) -->
+    <div style="position:relative;">
+      <canvas id="vizCanvas" width="800" height="450" style="width:100%;border-radius:10px;background:#0f1117;cursor:grab;display:block;touch-action:none;"></canvas>
+      <div id="vizTooltip" style="display:none;position:absolute;background:rgba(16,20,42,.92);color:#dce4ff;font-size:.74rem;padding:5px 10px;border-radius:7px;pointer-events:none;max-width:320px;line-height:1.38;z-index:20;white-space:pre-wrap;box-shadow:0 4px 12px #0006;"></div>
+    </div>
+
+    <!-- Legend + status -->
+    <div id="vizLegend" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:.77rem;align-items:center;color:var(--muted);"></div>
+    <div id="vizStatus" style="margin-top:5px;font-size:.78rem;color:var(--muted);min-height:18px;"></div>
+
+    <!-- PCA note -->
+    <p class="subtitle" style="margin-top:6px;font-size:.76rem;">
+      <strong>Note:</strong> closer dots share more semantic meaning — but this is a 3-D approximation of a 768-D space, so the view is lossy.
+      The coloured lines connect your query to whichever chunks are <em>most similar in the full 768-D space</em> (what the model actually uses for retrieval), which may visually appear further away due to that compression.
+      Click any dot for its full text.
+    </p>
+
+    <!-- Clicked-chunk inspector (hidden until a dot is clicked) -->
+    <div id="vizInfoPanel" style="display:none;margin-top:8px;background:#f6f8ff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+      <div style="font-weight:700;color:var(--accent);margin-bottom:5px;font-size:.82rem;">Selected chunk</div>
+      <div id="vizInfoContent" style="color:#1a2035;line-height:1.52;font-size:.82rem;white-space:pre-wrap;word-break:break-word;"></div>
+    </div>
+
+    <!-- Full ranked list — shown after Embed & Plot -->
+    <div id="vizRankingList" style="display:none;margin-top:18px;"></div>
+  </div>
+
+</div>
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/mammoth.browser.min.js"></script>
+<script src="utils/vectorStore.js"></script>
+<script src="utils/fileParser.js"></script>
+<script src="options.js"></script>
+<script src="utils/embedViz.js"></script>
+</body>
+</html>
+
+
+
+

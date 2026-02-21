@@ -1,0 +1,79 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Job Assistant</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main class="popup">
+    <header>
+      <h1>AI Job Assistant</h1>
+      <p>Control where the fill button appears.</p>
+    </header>
+
+    <section class="card">
+      <!-- Site toggle is the main control -->
+      <label class="toggle-row" for="siteToggle" style="padding-bottom:10px;">
+        <span>
+          <strong style="font-size:.98rem;">Enable on this site</strong>
+          <small id="siteLabel">No active website</small>
+        </span>
+        <input id="siteToggle" type="checkbox" />
+      </label>
+
+      <!-- Master is a global kill-switch, secondary -->
+      <div style="border-top:1px solid var(--line);padding-top:8px;margin-top:2px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <span style="font-size:.8rem;color:var(--muted);">
+          <strong style="color:var(--text);font-weight:600;">Master switch</strong>
+          &mdash; turns off fill buttons <em>everywhere</em> at once
+        </span>
+        <input id="globalToggle" type="checkbox" style="width:15px;height:15px;" />
+      </div>
+
+      <!-- Auto-prefetch mode -->
+      <div style="border-top:1px solid var(--line);padding-top:8px;margin-top:6px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <span style="font-size:.8rem;color:var(--muted);">
+          <strong style="color:var(--text);font-weight:600;">Auto pre-fetch</strong>
+          &mdash; generate answers in background when page loads<br/>
+          <em style="font-size:.72rem;">Off = only generate when you click the button</em>
+        </span>
+        <input id="autoPrefetchToggle" type="checkbox" style="width:15px;height:15px;flex-shrink:0;" />
+      </div>
+
+      <p id="toggleHint" style="margin:6px 0 0;font-size:.74rem;color:var(--muted);line-height:1.4;"></p>
+    </section>
+
+    <!-- Prefetch status card (hidden until data loads) -->
+    <section class="card" id="prefetchCard" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <strong style="font-size:.82rem;">Background answers</strong>
+        <span id="prefetchSummary" style="font-size:.76rem;color:var(--muted);"></span>
+      </div>
+      <div id="prefetchList" style="font-size:.76rem;max-height:130px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;"></div>
+    </section>
+
+    <section class="card actions">
+      <button id="scrapeLinkedInBtn" type="button">Import LinkedIn From Current Tab</button>
+      <button id="scrapeCompanyBtn" type="button">Scrape Company From Current Tab</button>
+      <button id="generateCoverLetterBtn" type="button">Generate Cover Letter PDF</button>
+      <button id="openSettingsBtn" class="secondary" type="button">Open Full Settings</button>
+      <p id="status" class="status"></p>
+    </section>
+
+    <!-- Cover letter review panel (hidden until letter generated) -->
+    <section class="card" id="clReviewCard" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <strong style="font-size:.88rem;">Review Cover Letter</strong>
+        <button id="clCancelBtn" class="secondary" type="button" style="padding:4px 10px;font-size:.8rem;">&#x2715; Cancel</button>
+      </div>
+      <textarea id="clReviewText" style="width:100%;height:340px;font-size:.8rem;line-height:1.55;resize:vertical;border:1px solid var(--line);border-radius:8px;padding:9px;font-family:inherit;color:var(--text);"></textarea>
+      <button id="clDownloadBtn" type="button" style="margin-top:8px;width:100%;padding:10px;font-size:.88rem;">⬇ Download PDF</button>
+    </section>
+  </main>
+
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

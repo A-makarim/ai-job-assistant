@@ -1,0 +1,40 @@
+﻿{
+  "manifest_version": 3,
+  "name": "AI Job Assistant",
+  "version": "1.0.0",
+  "description": "Fills job application fields in your own voice using local RAG (facts + voice) and Claude.",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://api.anthropic.com/*",
+    "http://127.0.0.1:8787/*",
+    "http://localhost:8787/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "style.css"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "AI Job Assistant",
+    "default_popup": "popup.html"
+  }
+}

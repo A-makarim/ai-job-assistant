@@ -1,0 +1,24 @@
+﻿.aiia-fill-voice-btn {
+  margin-top: 6px;
+  margin-bottom: 10px;
+  border: 1px solid #0f5c9b;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f2f8ff, #e5f0ff);
+  color: #0d4778;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 6px 11px;
+  cursor: pointer;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(14, 71, 120, 0.2);
+}
+
+.aiia-fill-voice-btn:hover {
+  background: linear-gradient(135deg, #e6f1ff, #d7e7ff);
+}
+
+.aiia-fill-voice-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
