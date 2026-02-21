@@ -1,10 +1,14 @@
 ﻿# AI Job Voice (Chrome Extension)
 
+Backend for this extension is deployed: https://ai-job-assistant-7and.onrender.com
+
 Let math do the work!
 
-I was taught PCAs in my last term ML module. Here's another way I'm using math to solve a real-life problem. (So humans like can work smart, save time, and watch more movies)
+I was taught PCAs in my last term ML module. Here's another way I'm using math to solve a real-life problem (So humans can work smart, save time, and watch more movies)!
 
 A Chrome extension that fills job application fields in your own voice, powered by Gemini semantic embedding and Claude.
+
+![DEMO](pic1.jpeg)
 
 ## How it works
 
@@ -18,7 +22,9 @@ All your data is broken into chunks. Its converted to a high dimentional vector.
 
 Next up, your job application advert and questions are also broken down in parallel chunks. They are vectorized. 
 Here is the fun part:
-You take the data from your profile that best matches the job application. This is pure math. Your data and requirements are compared in a high dimension. And most relevant aspects of your credentials are picked. Again, I've made a small playground at the bottom of extension page. Try searching in a query, and see it link to nearest vector points. In 3D, they might look further apart but they are the best embedding alignments. I'm using google's API for this. Any other algorithm can also be used. You will not need to bring a gemini API for this one. But to generate automatics best-fit cover letters or application questions, you will need Claude's API. 
+You take the data from your profile that best matches the job application. This is pure math. Your data and requirements are compared in a high dimension. And most relevant aspects of your credentials are picked. Again, I've made a small playground at the bottom of extension page. Try searching in a query, and see it link to nearest vector points. In 3D, they might look further apart but they are the best embedding alignments. I'm using google's API for this. Any other algorithm can also be used. You will not need to bring a gemini API for this one. But to generate automatic best-fit cover letters or application questions, you will need Claude's API. 
+
+![DEMO](pic2.jpeg)
 
 ---
 
